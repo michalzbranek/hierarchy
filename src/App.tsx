@@ -1,8 +1,10 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import TableComponent from "./TableComponent";
 
 function App() {
   const [data, setData] = useState(null);
+  const [headers, setHeaders] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("data.json")
@@ -12,7 +14,10 @@ function App() {
         }
         return response.json();
       })
-      .then((data) => setData(data))
+      .then((data) => {
+        setData(data);
+        setHeaders(Object.keys(data[0]["data"]));
+      })
       .catch((error) =>
         console.error(
           "There has been a problem with your fetch operation:",
@@ -21,7 +26,11 @@ function App() {
       );
   }, []);
 
-  return <div>{data && <pre>{JSON.stringify(data, null, 2)}</pre>}</div>;
+  return (
+    <>
+      <TableComponent data={data} headers={headers} />
+    </>
+  );
 }
 
 export default App;
