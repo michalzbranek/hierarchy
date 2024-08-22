@@ -1,5 +1,7 @@
-function TableComponent({ data, headers }: any) {
-  const deleteRow = () => {};
+function TableComponent({ data, headers, remove }: any) {
+  const deleteRow = (index: number) => {
+    remove(index);
+  };
 
   return (
     <table>
@@ -28,7 +30,7 @@ function TableComponent({ data, headers }: any) {
                 <td>{row.data["Beer consumption (l/y)"]}</td>
                 <td>{row.data["Knows the answer?"]}</td>
                 <td>
-                  <button onClick={deleteRow}>X</button>
+                  <button onClick={() => deleteRow(row.uuid)}>X</button>
                 </td>
               </tr>
             );
