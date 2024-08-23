@@ -13,6 +13,12 @@ function App() {
     });
   };
 
+  const show = (index: number) => {
+    setData((prevRows) => {
+      return prevRows.map((row) => {});
+    });
+  };
+
   useEffect(() => {
     fetch("data.json")
       .then((response) => {
@@ -23,10 +29,12 @@ function App() {
       })
       .then((data) => {
         const result = data.map((o: any) => ({
-          ...o,
+          data: o.data,
+          children: { show: false, uuid: uuid(), data: o.children },
           uuid: uuid(),
         }));
         setData(result);
+        // console.log(result[0].children.data.has_nemesis.records[0].data);
         setHeaders(Object.keys(data[0]["data"]));
       })
       .catch((error) =>
@@ -39,7 +47,12 @@ function App() {
 
   return (
     <>
-      <TableComponent data={data} headers={headers} remove={removeRow} />
+      <TableComponent
+        data={data}
+        headers={headers}
+        remove={removeRow}
+        show={show}
+      />
     </>
   );
 }
