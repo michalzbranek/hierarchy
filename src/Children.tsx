@@ -1,6 +1,10 @@
 import { Fragment } from "react/jsx-runtime";
 
-function Children({ row }: any) {
+function Children({ row, rowIndex, removeChildren }: any) {
+  const deleteChildren = (rowIndex:number, records: number, index: number) => {
+    removeChildren(rowIndex, records, index);
+  };
+
   return (
     <>
       {Object.keys(row.children.data).length !== 0 && (
@@ -19,6 +23,7 @@ function Children({ row }: any) {
                         </td>
                       );
                     })}
+                    <td>delete</td>
                   </tr>
                   <tr
                     key={row.children.uuid}
@@ -36,6 +41,11 @@ function Children({ row }: any) {
                         </td>
                       );
                     })}
+                    <td>
+                      <button onClick={() => deleteChildren(rowIndex, index, row.children.data.has_nemesis.records[index].data.ID)}>
+                        X
+                      </button>
+                    </td>
                   </tr>
                 </Fragment>
               );

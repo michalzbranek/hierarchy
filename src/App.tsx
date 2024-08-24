@@ -2,10 +2,32 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import TableComponent from "./TableComponent";
 import { v4 as uuid } from "uuid";
+import { produce } from "immer";
 
 function App() {
   const [data, setData] = useState<any[]>([]);
   const [headers, setHeaders] = useState<any[]>([]);
+
+  const removeCh = (rowNumber: number, recordNumber: number) => {
+    const deletedChildrenArray = produce(data, (draft: any) => {
+      draft[rowNumber].children.data.has_nemesis.records.splice(
+        recordNumber,
+        1
+      );
+    });
+
+    if (
+      deletedChildrenArray[rowNumber].children.data.has_nemesis.records
+        .length == 0
+    ) {
+      const fixedLength = produce(data, (draft: any) => {
+        draft[rowNumber].children.data = {};
+      });
+      setData(fixedLength);
+    } else {
+      setData(deletedChildrenArray);
+    }
+  };
 
   const removeRow = (index: number) => {
     setData((prevRows) => {
@@ -15,7 +37,10 @@ function App() {
 
   const show = (index: number) => {
     setData((prevRows) => {
-      return prevRows.map((row) => {});
+      return prevRows.map((row) => ({
+        ...row,
+        show: row.children.uuid === index ? !row.show : row.show,
+      }));
     });
   };
 
@@ -30,11 +55,11 @@ function App() {
       .then((data) => {
         const result = data.map((o: any) => ({
           data: o.data,
-          children: { show: false, uuid: uuid(), data: o.children },
+          children: { uuid: uuid(), data: o.children },
           uuid: uuid(),
+          show: false,
         }));
         setData(result);
-        // console.log(result[0].children.data.has_nemesis.records[0].data);
         setHeaders(Object.keys(data[0]["data"]));
       })
       .catch((error) =>
@@ -52,6 +77,7 @@ function App() {
         headers={headers}
         remove={removeRow}
         show={show}
+        removeChildren={removeCh}
       />
     </>
   );

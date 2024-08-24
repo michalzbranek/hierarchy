@@ -1,9 +1,17 @@
 import { Fragment } from "react/jsx-runtime";
 import Children from "./Children";
 
-function TableComponent({ data, headers, remove }: any) {
+function TableComponent({ data, headers, remove, show, removeChildren }: any) {
   const deleteRow = (index: number) => {
     remove(index);
+  };
+
+  const showHide = (index: number) => {
+    show(index);
+  };
+
+  const removeCh = (rowNumber: number, records: number, index: number) => {
+    removeChildren(rowNumber, records, index);
   };
 
   return (
@@ -26,7 +34,9 @@ function TableComponent({ data, headers, remove }: any) {
                 <tr key={index} style={{ backgroundColor: "violet" }}>
                   {Object.keys(row.children.data).length !== 0 ? (
                     <td>
-                      <button>children</button>
+                      <button onClick={() => showHide(row.children.uuid)}>
+                        children
+                      </button>
                     </td>
                   ) : (
                     <td></td>
@@ -38,7 +48,7 @@ function TableComponent({ data, headers, remove }: any) {
                     <button onClick={() => deleteRow(row.uuid)}>X</button>
                   </td>
                 </tr>
-                <Children row={row} />
+                {row.show && <Children row={row} rowIndex={index} removeChildren={removeCh} />}
               </Fragment>
             );
           })}
