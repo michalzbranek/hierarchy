@@ -6,3 +6,11 @@ thead {
   background-color: black;
   color: white;
 }
+
+#children {
+  background-color: aqua;
+}
+
+#delete {
+  background-color: red;
+}
