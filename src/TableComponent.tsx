@@ -10,36 +10,14 @@ function TableComponent({ data, handleDelete }: any) {
       : []
   );
 
-  // console.log(data);
-  // console.log(handleShow);
-
   const handleSubTodoDelete = (uuid: number) => {
-    setSubDatas((prevSubDatas: any) => {
-      return prevSubDatas.filter((data: any) => data.data.uuid !== uuid);
-    });
+    setSubDatas((prevDatas: any) =>
+      prevDatas.filter(({ data }: any) => data.uuid !== uuid)
+    );
   };
 
-  // const show = () => {
-  //   setSubDatas((prevRows: any) => {
-  //     return prevRows.map((row: any) => ({
-  //       ...row,
-  //       show: !row.show,
-  //     }));
-  //   });
-  // };
-
   const showHide = () => {
-    // setSubDatas((prevSubDatas: any) => {
-    //   return prevSubDatas.map(
-    //     (subData: any) => ({
-    //       ...subData,
-    //       show: !subData.show,
-    //     })
-    //     console.log(subData)
-    //   );
-    // });
     setShow(!show);
-    // console.log(subDatas[0].data.ID + ": " + subDatas[0].show);
   };
 
   return (
@@ -75,7 +53,6 @@ function TableComponent({ data, handleDelete }: any) {
                   key={data.data.uuid}
                   data={data}
                   handleDelete={handleSubTodoDelete}
-                  // handleShow={data.show}
                 />
               ))}
           </td>

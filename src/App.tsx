@@ -9,7 +9,6 @@ function App() {
   const handleIds = (json: any) => {
     json.map((jsonField: any) => {
       jsonField.data.uuid = uuid();
-      jsonField.show = false;
       jsonField.children.hasOwnProperty("has_nemesis")
         ? handleIds(jsonField.children.has_nemesis.records)
         : jsonField.children.hasOwnProperty("has_secrete") &&
@@ -24,19 +23,10 @@ function App() {
     setDatas(handleIds(jsonData));
   }, []);
 
-  // const show = (index: number) => {
-  //   setData((prevRows) => {
-  //     return prevRows.map((row) => ({
-  //       ...row,
-  //       show: row.children.uuid === index ? !row.show : row.show,
-  //     }));
-  //   });
-  // };
-
   const handleDelete = (uuid: number) => {
-    setDatas((prevDatas: any) => {
-      return prevDatas.filter((data: any) => data.data.uuid !== uuid);
-    });
+    setDatas((prevDatas: any) =>
+      prevDatas.filter(({ data }: any) => data.uuid !== uuid)
+    );
   };
 
   return (
@@ -46,7 +36,6 @@ function App() {
           key={data.data.uuid}
           data={data}
           handleDelete={handleDelete}
-          // handleShow={data.show}
         />
       ))}
     </>
