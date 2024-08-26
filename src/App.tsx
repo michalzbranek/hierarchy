@@ -9,6 +9,7 @@ function App() {
   const handleIds = (json: any) => {
     json.map((jsonField: any) => {
       jsonField.data.uuid = uuid();
+      // jsonField.data.show = false;
       jsonField.children.hasOwnProperty("has_nemesis")
         ? handleIds(jsonField.children.has_nemesis.records)
         : jsonField.children.hasOwnProperty("has_secrete") &&

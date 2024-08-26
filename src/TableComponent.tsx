@@ -27,7 +27,7 @@ function TableComponent({ data, handleDelete }: any) {
         <tr>
           <td></td>
           {Object.keys(data.data).map((header: any, index: number) => {
-            return <td key={index}>{header}</td>;
+            return header !== "uuid" && <td key={index}>{header}</td>;
           })}
           <td>delete</td>
         </tr>
@@ -42,7 +42,9 @@ function TableComponent({ data, handleDelete }: any) {
             <td></td>
           )}
           {Object.keys(data.data).map((header: any, index: number) => {
-            return <td key={index}>{data.data[header]}</td>;
+            return (
+              header !== "uuid" && <td key={index}>{data.data[header]}</td>
+            );
           })}
           <td>
             <button id="delete" onClick={() => handleDelete(data.data.uuid)}>
