@@ -33,7 +33,7 @@ function TableComponent({ data, handleDelete }: any) {
       </thead>
       <tbody>
         <tr>
-          {Object.keys(data.children).length !== 0 ? (
+          {Object.keys(data.children).length !== 0 && subDatas.length !== 0 ? (
             <td id="children" onClick={showHide}></td>
           ) : (
             <td></td>
