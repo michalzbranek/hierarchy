@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 function TableComponent({ data, handleDelete }: any) {
+  // let show = false;
+  // const [show, setShow] = useState(false);
   const [subDatas, setSubDatas] = useState(
     data.children.hasOwnProperty("has_nemesis")
       ? data.children.has_nemesis.records
@@ -9,14 +11,14 @@ function TableComponent({ data, handleDelete }: any) {
       : []
   );
 
-  const handleSubTodoDelete = (id: number) => {
+  const handleSubTodoDelete = (uuid: number) => {
     setSubDatas((prevSubDatas: any) => {
-      return prevSubDatas.filter((data: any) => data.data.ID !== id);
+      return prevSubDatas.filter((data: any) => data.data.uuid !== uuid);
     });
   };
 
-  // const showHide = (index: number) => {
-  //   show(index);
+  // const showHide = () => {
+  //   setShow(true);
   // };
 
   return (
@@ -43,7 +45,7 @@ function TableComponent({ data, handleDelete }: any) {
             return <td key={index}>{data.data[header]}</td>;
           })}
           <td>
-            <button id="delete" onClick={() => handleDelete(data.data.ID)}>
+            <button id="delete" onClick={() => handleDelete(data.data.uuid)}>
               X
             </button>
           </td>
@@ -52,9 +54,10 @@ function TableComponent({ data, handleDelete }: any) {
           <td>
             {subDatas.map((data: any) => (
               <TableComponent
-                key={data.data.ID}
+                key={data.data.uuid}
                 data={data}
                 handleDelete={handleSubTodoDelete}
+                // handleShow={show}
               />
             ))}
           </td>

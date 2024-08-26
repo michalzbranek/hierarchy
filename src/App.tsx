@@ -1,11 +1,27 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableComponent from "./TableComponent";
 const res = await fetch("./data.json");
 const jsonData = await res.json();
+import { v4 as uuid } from "uuid";
 
 function App() {
-  const [datas, setDatas] = useState(jsonData);
+  const handleIds = (json: any) => {
+    json.map((jsonField: any) => {
+      jsonField.data.uuid = uuid();
+      jsonField.children.hasOwnProperty("has_nemesis")
+        ? handleIds(jsonField.children.has_nemesis.records)
+        : jsonField.children.hasOwnProperty("has_secrete") &&
+          handleIds(jsonField.children.has_secrete.records);
+    });
+    return json;
+  };
+
+  const [datas, setDatas] = useState([]);
+
+  useEffect(() => {
+    setDatas(handleIds(jsonData));
+  }, []);
 
   // const show = (index: number) => {
   //   setData((prevRows) => {
@@ -16,9 +32,9 @@ function App() {
   //   });
   // };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (uuid: number) => {
     setDatas((prevDatas: any) => {
-      return prevDatas.filter((data: any) => data.data.ID !== id);
+      return prevDatas.filter((data: any) => data.data.uuid !== uuid);
     });
   };
 
@@ -26,7 +42,7 @@ function App() {
     <>
       {datas.map((data: any) => (
         <TableComponent
-          key={data.data.ID}
+          key={data.data.uuid}
           data={data}
           handleDelete={handleDelete}
         />
