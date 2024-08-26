@@ -1,8 +1,7 @@
 import { useState } from "react";
 
 function TableComponent({ data, handleDelete }: any) {
-  // let show = false;
-  // const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [subDatas, setSubDatas] = useState(
     data.children.hasOwnProperty("has_nemesis")
       ? data.children.has_nemesis.records
@@ -11,21 +10,43 @@ function TableComponent({ data, handleDelete }: any) {
       : []
   );
 
+  // console.log(data);
+  // console.log(handleShow);
+
   const handleSubTodoDelete = (uuid: number) => {
     setSubDatas((prevSubDatas: any) => {
       return prevSubDatas.filter((data: any) => data.data.uuid !== uuid);
     });
   };
 
-  // const showHide = () => {
-  //   setShow(true);
+  // const show = () => {
+  //   setSubDatas((prevRows: any) => {
+  //     return prevRows.map((row: any) => ({
+  //       ...row,
+  //       show: !row.show,
+  //     }));
+  //   });
   // };
+
+  const showHide = () => {
+    // setSubDatas((prevSubDatas: any) => {
+    //   return prevSubDatas.map(
+    //     (subData: any) => ({
+    //       ...subData,
+    //       show: !subData.show,
+    //     })
+    //     console.log(subData)
+    //   );
+    // });
+    setShow(!show);
+    // console.log(subDatas[0].data.ID + ": " + subDatas[0].show);
+  };
 
   return (
     <table>
       <thead>
         <tr>
-          <td></td>
+          <td>children</td>
           {Object.keys(data.data).map((header: any, index: number) => {
             return header !== "uuid" && <td key={index}>{header}</td>;
           })}
@@ -35,9 +56,7 @@ function TableComponent({ data, handleDelete }: any) {
       <tbody>
         <tr>
           {Object.keys(data.children).length !== 0 ? (
-            <td>
-              <button id="children">children</button>
-            </td>
+            <td id="children" onClick={showHide}></td>
           ) : (
             <td></td>
           )}
@@ -46,22 +65,19 @@ function TableComponent({ data, handleDelete }: any) {
               header !== "uuid" && <td key={index}>{data.data[header]}</td>
             );
           })}
-          <td>
-            <button id="delete" onClick={() => handleDelete(data.data.uuid)}>
-              X
-            </button>
-          </td>
+          <td id="delete" onClick={() => handleDelete(data.data.uuid)}></td>
         </tr>
         <tr>
-          <td>
-            {subDatas.map((data: any) => (
-              <TableComponent
-                key={data.data.uuid}
-                data={data}
-                handleDelete={handleSubTodoDelete}
-                // handleShow={show}
-              />
-            ))}
+          <td style={{ paddingLeft: "40px" }}>
+            {show &&
+              subDatas.map((data: any) => (
+                <TableComponent
+                  key={data.data.uuid}
+                  data={data}
+                  handleDelete={handleSubTodoDelete}
+                  // handleShow={data.show}
+                />
+              ))}
           </td>
         </tr>
       </tbody>
