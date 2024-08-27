@@ -1,6 +1,7 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import TableComponent from "./TableComponent";
+
 const res = await fetch("./data.json");
 const jsonData = await res.json();
 
@@ -36,15 +37,28 @@ function App() {
   };
 
   return (
-    <>
-      {data?.map((data: DatabaseRecord) => (
-        <TableComponent
-          key={data.data.uuid}
-          data={data}
-          handleDelete={handleDelete}
-        />
-      ))}
-    </>
+    <table>
+      <thead>
+        <tr>
+          {data?.length !== 0 && <td>children</td>}
+          {data?.length !== 0 &&
+            Object.keys(data?.[0].data || {}).map(
+              (header: string, index: number) =>
+                header !== "uuid" && <td key={index}>{header}</td>
+            )}
+          {data?.length !== 0 && <td>delete</td>}
+        </tr>
+      </thead>
+      <tbody>
+        {data?.map((data: DatabaseRecord) => (
+          <TableComponent
+            key={data.data.uuid}
+            data={data}
+            handleDelete={handleDelete}
+          />
+        ))}
+      </tbody>
+    </table>
   );
 }
 

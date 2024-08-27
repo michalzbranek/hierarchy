@@ -5,9 +5,17 @@ td {
   border-collapse: collapse;
 }
 
+table {
+  width: 100%;
+}
+
 thead {
   background-color: black;
   color: white;
+}
+
+thead td {
+  border: 1px solid white;
 }
 
 #children {
