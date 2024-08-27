@@ -1,18 +1,14 @@
 import { useState } from "react";
 
 function TableComponent({ data, handleDelete }: any) {
+  console.log(data);
   const [show, setShow] = useState(false);
-  const [subDatas, setSubDatas] = useState(
-    data.children.hasOwnProperty("has_nemesis")
-      ? data.children.has_nemesis.records
-      : data.children.hasOwnProperty("has_secrete")
-      ? data.children.has_secrete.records
-      : []
-  );
+  const [subDatas, setSubDatas] = useState<JsonDatabase>(data.children);
 
-  const handleSubTodoDelete = (uuid: number) => {
-    setSubDatas((prevDatas: any) =>
-      prevDatas.filter(({ data }: any) => data.uuid !== uuid)
+  console.log("subDatas", subDatas);
+  const handleSubTodoDelete = (uuid: string) => {
+    setSubDatas((prevDatas: JsonDatabase) =>
+      prevDatas.filter(({ data }: DatabaseRecord) => data.uuid !== uuid)
     );
   };
 
@@ -25,7 +21,7 @@ function TableComponent({ data, handleDelete }: any) {
       <thead>
         <tr>
           <td>children</td>
-          {Object.keys(data.data).map((header: any, index: number) => {
+          {Object.keys(data.data).map((header: string, index: number) => {
             return header !== "uuid" && <td key={index}>{header}</td>;
           })}
           <td>delete</td>
@@ -38,7 +34,7 @@ function TableComponent({ data, handleDelete }: any) {
           ) : (
             <td></td>
           )}
-          {Object.keys(data.data).map((header: any, index: number) => {
+          {Object.keys(data.data).map((header: string, index: number) => {
             return (
               header !== "uuid" && <td key={index}>{data.data[header]}</td>
             );
@@ -46,9 +42,9 @@ function TableComponent({ data, handleDelete }: any) {
           <td id="delete" onClick={() => handleDelete(data.data.uuid)}></td>
         </tr>
         <tr>
-          <td style={{ paddingLeft: "40px" }}>
-            {show &&
-              subDatas.map((data: any) => (
+          <td>
+            {show && Object.keys(subDatas).length !== 0 &&
+              subDatas.map((data: DatabaseRecord) => (
                 <TableComponent
                   key={data.data.uuid}
                   data={data}

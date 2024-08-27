@@ -3,35 +3,41 @@ import { useEffect, useState } from "react";
 import TableComponent from "./TableComponent";
 const res = await fetch("./data.json");
 const jsonData = await res.json();
-import { v4 as uuid } from "uuid";
 
 function App() {
-  const handleIds = (json: any) => {
-    json.map((jsonField: any) => {
-      jsonField.data.uuid = uuid();
-      jsonField.children.hasOwnProperty("has_nemesis")
-        ? handleIds(jsonField.children.has_nemesis.records)
-        : jsonField.children.hasOwnProperty("has_secrete") &&
-          handleIds(jsonField.children.has_secrete.records);
-    });
-    return json;
+  const parseJsonDatabase = (json: JsonDatabase): Array<DatabaseRecord> =>
+    json.map(({ data, children }) => ({
+      data: { ...data, uuid: crypto.randomUUID() },
+      children: parseChildNode(children),
+    }));
+
+  const parseChildNode = ({ has_nemesis, has_secrete }: ChildrenRecords) => {
+    if (has_nemesis) {
+      return parseJsonDatabase(has_nemesis.records);
+    }
+
+    if (has_secrete) {
+      return parseJsonDatabase(has_secrete.records);
+    }
+
+    return {};
   };
 
-  const [datas, setDatas] = useState([]);
+  const [data, setData] = useState<JsonDatabase>();
 
   useEffect(() => {
-    setDatas(handleIds(jsonData));
+    setData(parseJsonDatabase(jsonData));
   }, []);
 
   const handleDelete = (uuid: number) => {
-    setDatas((prevDatas: any) =>
-      prevDatas.filter(({ data }: any) => data.uuid !== uuid)
+    setData((prevData: any) =>
+      prevData.filter(({ data }: any) => data.uuid !== uuid)
     );
   };
 
   return (
     <>
-      {datas.map((data: any) => (
+      {data?.map((data: DatabaseRecord) => (
         <TableComponent
           key={data.data.uuid}
           data={data}
