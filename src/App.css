@@ -1,12 +1,17 @@
 table,
 th,
 td {
-  border: 1px solid black;
+  border-bottom: 1px solid black;
   border-collapse: collapse;
+}
+
+tr {
+  height: 40px;
 }
 
 table {
   width: 100%;
+  table-layout: fixed;
 }
 
 thead {
@@ -20,8 +25,10 @@ thead td {
 
 #children {
   background-color: aqua;
+  border: 1px solid black;
 }
 
 #delete {
   background-color: red;
+  border: 1px solid black;
 }

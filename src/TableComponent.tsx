@@ -20,7 +20,9 @@ function TableComponent({ data, handleDelete }: any) {
         {Object.keys(data.children).length !== 0 && subDatas.length !== 0 ? (
           <td id="children" onClick={showHide}></td>
         ) : (
-          <td></td>
+          <td
+            style={{ border: "1px solid black", backgroundColor: "grey" }}
+          ></td>
         )}
         {Object.keys(data.data).map(
           (header: string, index: number) =>
@@ -28,10 +30,10 @@ function TableComponent({ data, handleDelete }: any) {
         )}
         <td id="delete" onClick={() => handleDelete(data.data.uuid)}></td>
       </tr>
-      <tr>
-        <td>
-          {show && (
-            <table>
+      {show && (
+        <tr>
+          <td>
+            <table style={{ marginLeft: "100px", width: "800px" }}>
               <thead>
                 <tr>
                   {Object.keys(data.children).length !== 0 &&
@@ -57,9 +59,9 @@ function TableComponent({ data, handleDelete }: any) {
                   ))}
               </tbody>
             </table>
-          )}
-        </td>
-      </tr>
+          </td>
+        </tr>
+      )}
     </>
   );
 }
