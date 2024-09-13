@@ -36,7 +36,6 @@ type ProcessedDatabaseRecord = {
 };
 
 type NormalizedDataInnerElement = {
-  // parent: string;
   data: {};
   childrens: Array;
 };
@@ -45,17 +44,3 @@ type NormalizedDataObject = {
   [key: string]: NormalizedDataInnerElement;
   [key: string]: [];
 };
-
-// type DatabaseRecord = {
-//   has_nemesis?: { records: Array<DatabaseRecord> };
-//   has_secrete?: { records: Array<DatabaseRecord> };
-//   data?: ProcessedData;
-//   children?: Array<DatabaseRecord>;
-// };
-
-// type ProcessedDatabaseRecord = {
-//   data: ProcessedData;
-//   children: Array<ProcessedDatabaseRecord>;
-// };
-
-// type ProcessedJsonDatabase = Array<ProcessedDatabaseRecord>;
