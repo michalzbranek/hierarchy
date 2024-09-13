@@ -22,7 +22,7 @@ function TableComponent({ data, uuid, manageDelete }: any) {
           Object.keys(data[`${uuid}`].data).map(
             (header: string, index: number) =>
               header !== "uuid" && (
-                <td key={index}>
+                <td key={index} style={{border: "1px solid black"}}>
                   {data[`${uuid}`].data[header as keyof ProcessedData]}
                 </td>
               )
