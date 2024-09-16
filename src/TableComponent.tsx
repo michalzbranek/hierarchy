@@ -7,6 +7,11 @@ function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
     setShow((showing) => !showing);
   };
 
+  const handleDeleteAndShow = (uuid: string) => {
+    show === true && setShow((showing) => !showing);
+    handleDelete(uuid);
+  };
+
   return (
     <>
       <tr>
@@ -27,7 +32,7 @@ function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
                 </td>
               )
           )}
-        <td id="delete" onClick={() => handleDelete(uuid)}></td>
+        <td id="delete" onClick={() => handleDeleteAndShow(uuid)}></td>
       </tr>
       {show && (
         <tr>
