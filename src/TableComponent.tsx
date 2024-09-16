@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function TableComponent({ data, uuid, manageDelete }: any) {
+function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
   const [show, setShow] = useState(false);
 
   const showHide = () => {
@@ -22,12 +22,12 @@ function TableComponent({ data, uuid, manageDelete }: any) {
           Object.keys(data[`${uuid}`].data).map(
             (header: string, index: number) =>
               header !== "uuid" && (
-                <td key={index} style={{border: "1px solid black"}}>
+                <td key={index} style={{ border: "1px solid black" }}>
                   {data[`${uuid}`].data[header as keyof ProcessedData]}
                 </td>
               )
           )}
-        <td id="delete" onClick={() => manageDelete(uuid)}></td>
+        <td id="delete" onClick={() => handleDelete(uuid)}></td>
       </tr>
       {show && (
         <tr>
@@ -48,16 +48,18 @@ function TableComponent({ data, uuid, manageDelete }: any) {
               </thead>
               <tbody>
                 {data[`${uuid}`].childrens.length !== 0 &&
-                  data[`${uuid}`].childrens.map((uuid: any, index: number) => {
-                    return (
-                      <TableComponent
-                        key={index}
-                        data={data}
-                        uuid={uuid}
-                        manageDelete={manageDelete}
-                      />
-                    );
-                  })}
+                  data[`${uuid}`].childrens.map(
+                    (uuid: string, index: number) => {
+                      return (
+                        <TableComponent
+                          key={index}
+                          data={data}
+                          uuid={uuid}
+                          handleDelete={handleDelete}
+                        />
+                      );
+                    }
+                  )}
               </tbody>
             </table>
           </td>

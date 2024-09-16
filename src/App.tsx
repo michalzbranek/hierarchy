@@ -1,56 +1,73 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import TableComponent from "./TableComponent";
-import { produce } from "immer";
 
 const res = await fetch("./data.json");
 const jsonData = await res.json();
 
 function App() {
-  const parseJsonDatabase = (json: any) =>
-    json.map(({ data, children }: any) => ({
+  const normalizedDataObject: NormalizedDataObject = {};
+  const [data, setData] = useState<NormalizedDataObject>({});
+  let temporaryData: NormalizedDataObject = {};
+
+  // remove has_nemesis and has_secrete and apply UUID to every element
+  const parseJsonDatabase = (json: JsonDatabase): Array<DatabaseRecord> =>
+    json.map(({ data, children }) => ({
       data: { ...data, uuid: crypto.randomUUID() },
       children: parseChildNode(children),
     }));
 
-  const parseChildNode = ({ has_nemesis, has_secrete }: any) => {
-    if (has_nemesis) {
-      return parseJsonDatabase(has_nemesis.records);
-    }
+  const parseChildNode = (children: ChildrenRecords) => {
+    if (!Array.isArray(children)) {
+      if (children.has_nemesis) {
+        return parseJsonDatabase(children.has_nemesis.records);
+      }
 
-    if (has_secrete) {
-      return parseJsonDatabase(has_secrete.records);
+      if (children.has_secrete) {
+        return parseJsonDatabase(children.has_secrete.records);
+      }
     }
 
     return {};
   };
 
-  const getRootUUIDs = (json: any) =>
-    json.map((element: any) => element.data.uuid);
+  const getRootUUIDs = (json: Array<DatabaseRecord>) =>
+    json.map((element: DatabaseRecord) => element.data.uuid);
 
-  const normalizedDataObject: NormalizedDataObject = {};
-
-  const normalize = (json: any, parentUuid?: string) => {
+  const normalize = (json: Array<DatabaseRecord>, parent?: string) => {
+    // go through every element of parsed json
     for (const oldElement of json) {
       let childrensArray = [];
-      if (oldElement.children.length !== undefined) {
+      // if there is at least one children then push its UUID into array
+      if (
+        Array.isArray(oldElement.children) &&
+        oldElement.children.length !== undefined
+      ) {
         for (const children of oldElement.children) {
           childrensArray.push(children.data.uuid);
         }
       }
+      // create new element with its parent UUID, its data and its childrens array
       const normalizedElement = {
-        parent: parentUuid,
+        parentUUID: parent!,
         data: oldElement.data,
-        childrens: childrensArray,
+        childrens: childrensArray as string[],
       };
-      oldElement.children.length !== undefined &&
-        normalize(oldElement.children, oldElement.data.uuid);
-      normalizedDataObject[normalizedElement.data.uuid] = normalizedElement;
+      // recursively call normalize for its children from old parsed json
+      if (Array.isArray(oldElement.children)) {
+        oldElement.children.length !== undefined &&
+          normalize(oldElement.children, oldElement.data.uuid);
+      }
+      normalizedDataObject[normalizedElement.data.uuid!] = normalizedElement;
     }
-    normalizedDataObject.arrayOfParentUUIDs = getRootUUIDs(json);
+    // this applies to root elements that don't have its parent
+    const normalizedRoot = {
+      parentUUID: "",
+      data: {},
+      childrens: getRootUUIDs(json) as string[],
+    };
+    normalizedDataObject.root = normalizedRoot;
   };
-
-  const [data, setData] = useState<any>({});
 
   useEffect(() => {
     const parsedJsonDatabase = parseJsonDatabase(jsonData);
@@ -58,74 +75,66 @@ function App() {
     setData(normalizedDataObject);
   }, []);
 
-  let draftData: any = {};
-
-  const handleDelete = (uuid: string) => {
-    if (draftData[`${uuid}`].childrens.length !== 0) {
-      draftData[`${uuid}`].childrens.map((childrenUuid: string) =>
-        handleDelete(childrenUuid)
+  const deleteUUID = (uuid: string) => {
+    // recursively apply deleteUUID on every children
+    if (temporaryData[`${uuid}`].childrens.length !== 0) {
+      temporaryData[`${uuid}`].childrens.map((childrenUuid: string) =>
+        deleteUUID(childrenUuid)
       );
     }
-    const parentUUID = draftData[`${uuid}`].parent;
+    // delete UUID in parent array
+    const parentUUID = temporaryData[`${uuid}`].parentUUID;
     if (parentUUID !== undefined) {
-      draftData = produce(draftData, (draft: any) => {
-        const index = draft[`${parentUUID}`].childrens.findIndex(
-          (children: any) => {
-            return children === uuid;
-          }
-        );
-        if (index !== -1) {
-          draft[`${parentUUID}`].childrens.splice(index, 1);
-        }
-      });
+      temporaryData[`${parentUUID}`].childrens = temporaryData[
+        `${parentUUID}`
+      ].childrens.filter((childrenUUID: string) => childrenUUID !== uuid);
     } else {
-      draftData = produce(draftData, (draft: any) => {
-        const index = draft.arrayOfParentUUIDs.findIndex((element: any) => {
-          return element === uuid;
-        });
-        if (index !== -1) {
-          draft.arrayOfParentUUIDs.splice(index, 1);
-        }
-      });
+      temporaryData.root.childrens = temporaryData.root.childrens.filter(
+        (baseUUID: string) => baseUUID !== uuid
+      );
     }
-    draftData = produce(draftData, (draft: any) => {
-      delete draft[`${uuid}`];
-    });
+    // delete element
+    const { [uuid]: removedElement, ...rest } = temporaryData;
+    temporaryData = rest;
   };
 
-  const manageDelete = (uuid: string) => {
-    draftData = data;
-    handleDelete(uuid);
-    setData(draftData);
+  const handleDelete = (uuid: string) => {
+    temporaryData = data;
+    deleteUUID(uuid);
+    setData(temporaryData);
   };
+
+  const renderHeader = () =>
+    Object.keys(data[`${data.root.childrens[0]}`].data).map(
+      (header: string, index: number) =>
+        header !== "uuid" && <td key={index}>{header}</td>
+    );
 
   return (
     <table>
       <thead>
         <tr>
-          {data.arrayOfParentUUIDs !== undefined &&
-            data.arrayOfParentUUIDs.length !== 0 && <td>children</td>}
-          {data.arrayOfParentUUIDs !== undefined &&
-            data.arrayOfParentUUIDs.length !== 0 &&
-            Object.keys(data[`${data.arrayOfParentUUIDs[0]}`].data).map(
-              (header: string, index: number) =>
-                header !== "uuid" && <td key={index}>{header}</td>
-            )}
-          {data.arrayOfParentUUIDs !== undefined &&
-            data.arrayOfParentUUIDs.length !== 0 && <td>delete</td>}
+          {data.root !== undefined && data.root.childrens.length !== 0 && (
+            <>
+              <td>children</td>
+              {renderHeader()}
+              <td>delete</td>
+            </>
+          )}
         </tr>
       </thead>
       <tbody>
-        {data.arrayOfParentUUIDs?.map((uuid: any, index: number) => {
-          return (
-            <TableComponent
-              key={index}
-              data={data}
-              uuid={uuid}
-              manageDelete={manageDelete}
-            />
-          );
-        })}
+        {data.root !== undefined &&
+          data.root.childrens?.map((uuid: string, index: number) => {
+            return (
+              <TableComponent
+                key={index}
+                data={data}
+                uuid={uuid}
+                handleDelete={handleDelete}
+              />
+            );
+          })}
       </tbody>
     </table>
   );

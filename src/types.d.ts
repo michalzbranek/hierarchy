@@ -1,27 +1,29 @@
 type RawData = {
-  ID: string;
-  Name: string;
-  Gender: string;
-  Ability: string;
-  Minimal_distance: number;
-  Weight: number;
-  Born: string;
-  In_space_since: string;
-  Beer_consumption: number;
-  Knows_the_answer: string;
-  Character_ID: number;
-  Is_alive: string;
-  Years: number;
-  Nemesis_ID: number;
-  Secrete_Code: number;
+  ID?: string;
+  Name?: string;
+  Gender?: string;
+  Ability?: string;
+  Minimal_distance?: number;
+  Weight?: number;
+  Born?: string;
+  In_space_since?: string;
+  Beer_consumption?: number;
+  Knows_the_answer?: string;
+  Character_ID?: number;
+  Is_alive?: string;
+  Years?: number;
+  Nemesis_ID?: number;
+  Secrete_Code?: number;
 };
 
-type ProcessedData = RawData & { uuid: string };
+type ProcessedData = RawData & { uuid?: string };
 
-type ChildrenRecords = {
-  has_nemesis?: { records: Array<DatabaseRecord> };
-  has_secrete?: { records: Array<DatabaseRecord> };
-};
+type ChildrenRecords =
+  | {
+      has_nemesis?: { records: Array<DatabaseRecord> };
+      has_secrete?: { records: Array<DatabaseRecord> };
+    }
+  | Array<DatabaseRecord>;
 
 type DatabaseRecord = {
   data: ProcessedData;
@@ -36,11 +38,17 @@ type ProcessedDatabaseRecord = {
 };
 
 type NormalizedDataInnerElement = {
-  data: {};
-  childrens: Array;
+  parentUUID: string;
+  data: ProcessedData;
+  childrens: string[];
 };
 
 type NormalizedDataObject = {
   [key: string]: NormalizedDataInnerElement;
-  [key: string]: [];
 };
+
+interface TableComponentProps {
+  data: NormalizedDataObject;
+  uuid: string;
+  handleDelete(uuid: string): void;
+}
