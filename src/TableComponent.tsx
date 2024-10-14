@@ -1,23 +1,16 @@
-import { useState } from "react";
-
-function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
-  const [show, setShow] = useState(false);
-
-  const showHide = () => {
-    setShow((showing) => !showing);
-  };
-
-  const handleDeleteAndShow = (uuid: string) => {
-    show === true && setShow((showing) => !showing);
-    handleDelete(uuid);
-  };
-
+function TableComponent({
+  data,
+  uuid,
+  handleDelete,
+  handleShowHide,
+  showChildrens,
+}: TableComponentProps) {
   return (
     <>
       <tr>
         {data[`${uuid}`] !== undefined &&
         data[`${uuid}`].childrens.length !== 0 ? (
-          <td id="children" onClick={showHide}></td>
+          <td id="children" onClick={() => handleShowHide(uuid)}></td>
         ) : (
           <td
             style={{ border: "1px solid black", backgroundColor: "grey" }}
@@ -32,9 +25,9 @@ function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
                 </td>
               )
           )}
-        <td id="delete" onClick={() => handleDeleteAndShow(uuid)}></td>
+        <td id="delete" onClick={() => handleDelete(uuid)}></td>
       </tr>
-      {show && (
+      {showChildrens && (
         <tr>
           <td>
             <table style={{ marginLeft: "100px", width: "800px" }}>
@@ -61,6 +54,8 @@ function TableComponent({ data, uuid, handleDelete }: TableComponentProps) {
                           data={data}
                           uuid={uuid}
                           handleDelete={handleDelete}
+                          handleShowHide={handleShowHide}
+                          showChildrens={data[`${uuid}`].showChildrens}
                         />
                       );
                     }

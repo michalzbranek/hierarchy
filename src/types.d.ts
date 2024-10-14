@@ -41,6 +41,7 @@ type NormalizedDataInnerElement = {
   parentUUID: string;
   data: ProcessedData;
   childrens: string[];
+  showChildrens: boolean;
 };
 
 type NormalizedDataObject = {
@@ -51,4 +52,6 @@ interface TableComponentProps {
   data: NormalizedDataObject;
   uuid: string;
   handleDelete(uuid: string): void;
+  handleShowHide(uuid: string): void;
+  showChildrens: boolean;
 }

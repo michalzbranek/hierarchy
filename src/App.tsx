@@ -52,6 +52,7 @@ function App() {
         parentUUID: parent!,
         data: oldElement.data,
         childrens: childrensArray as string[],
+        showChildrens: false,
       };
       // recursively call normalize for its children from old parsed json
       if (Array.isArray(oldElement.children)) {
@@ -65,6 +66,7 @@ function App() {
       parentUUID: "",
       data: {},
       childrens: getRootUUIDs(json) as string[],
+      showChildrens: false,
     };
     normalizedDataObject.root = normalizedRoot;
   };
@@ -104,6 +106,27 @@ function App() {
     setData(temporaryData);
   };
 
+  const showHide = (uuid: string) => {
+    if (temporaryData[`${uuid}`].showChildrens === true) {
+      temporaryData[`${uuid}`].childrens.map((childrenUuid: string) =>
+        showHide(childrenUuid)
+      );
+    }
+    temporaryData = {
+      ...temporaryData,
+      [uuid]: {
+        ...temporaryData[uuid],
+        showChildrens: !temporaryData[uuid].showChildrens,
+      },
+    };
+  };
+
+  const handleShowHide = (uuid: string) => {
+    temporaryData = data;
+    showHide(uuid);
+    setData(temporaryData);
+  };
+
   const renderHeader = () =>
     Object.keys(data[`${data.root.childrens[0]}`].data).map(
       (header: string, index: number) =>
@@ -132,6 +155,8 @@ function App() {
                 data={data}
                 uuid={uuid}
                 handleDelete={handleDelete}
+                handleShowHide={handleShowHide}
+                showChildrens={data[`${uuid}`].showChildrens}
               />
             );
           })}
