@@ -1,3 +1,6 @@
+import InnerDataComponent from "./InnerDataComponent";
+import InnerHeaderComponent from "./InnerHeaderComponent";
+
 function TableComponent({
   data,
   uuid,
@@ -7,43 +10,17 @@ function TableComponent({
 }: TableComponentProps) {
   return (
     <>
-      <tr>
-        {data[`${uuid}`] !== undefined &&
-        data[`${uuid}`].childrens.length !== 0 ? (
-          <td id="children" onClick={() => handleShowHide(uuid)}></td>
-        ) : (
-          <td
-            style={{ border: "1px solid black", backgroundColor: "grey" }}
-          ></td>
-        )}
-        {data[`${uuid}`] !== undefined &&
-          Object.keys(data[`${uuid}`].data).map(
-            (header: string, index: number) =>
-              header !== "uuid" && (
-                <td key={index} style={{ border: "1px solid black" }}>
-                  {data[`${uuid}`].data[header as keyof ProcessedData]}
-                </td>
-              )
-          )}
-        <td id="delete" onClick={() => handleDelete(uuid)}></td>
-      </tr>
+      <InnerDataComponent
+        data={data}
+        uuid={uuid}
+        handleDelete={handleDelete}
+        handleShowHide={handleShowHide}
+      />
       {showChildrens && (
         <tr>
           <td>
             <table style={{ marginLeft: "100px", width: "800px" }}>
-              <thead>
-                <tr>
-                  {data[`${uuid}`].childrens.length !== 0 && <td>children</td>}
-                  {data[`${uuid}`].childrens.length !== 0 &&
-                    Object.keys(
-                      data[`${data[`${uuid}`].childrens[0]}`].data
-                    ).map(
-                      (header: string, index: number) =>
-                        header !== "uuid" && <td key={index}>{header}</td>
-                    )}
-                  {data[`${uuid}`].childrens.length !== 0 && <td>delete</td>}
-                </tr>
-              </thead>
+              <InnerHeaderComponent data={data} uuid={uuid} />
               <tbody>
                 {data[`${uuid}`].childrens.length !== 0 &&
                   data[`${uuid}`].childrens.map(

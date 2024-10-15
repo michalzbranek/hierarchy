@@ -55,3 +55,15 @@ interface TableComponentProps {
   handleShowHide(uuid: string): void;
   showChildrens: boolean;
 }
+
+interface InnerHeaderProps {
+  data: NormalizedDataObject;
+  uuid: string;
+}
+
+interface InnerDataProps {
+  data: NormalizedDataObject;
+  uuid: string;
+  handleDelete(uuid: string): void;
+  handleShowHide(uuid: string): void;
+}

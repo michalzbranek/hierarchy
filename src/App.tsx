@@ -108,10 +108,21 @@ function App() {
 
   const showHide = (uuid: string) => {
     if (temporaryData[`${uuid}`].showChildrens === true) {
+      temporaryData = {
+        ...temporaryData,
+        [uuid]: {
+          ...temporaryData[uuid],
+          showChildrens: !temporaryData[uuid].showChildrens,
+        },
+      };
       temporaryData[`${uuid}`].childrens.map((childrenUuid: string) =>
         showHide(childrenUuid)
       );
     }
+  };
+
+  const handleShowHide = (uuid: string) => {
+    temporaryData = data;
     temporaryData = {
       ...temporaryData,
       [uuid]: {
@@ -119,11 +130,11 @@ function App() {
         showChildrens: !temporaryData[uuid].showChildrens,
       },
     };
-  };
-
-  const handleShowHide = (uuid: string) => {
-    temporaryData = data;
-    showHide(uuid);
+    if (temporaryData[`${uuid}`].showChildrens === true) {
+      temporaryData[`${uuid}`].childrens.map((childrenUuid: string) =>
+        showHide(childrenUuid)
+      );
+    }
     setData(temporaryData);
   };
 
