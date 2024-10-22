@@ -1,21 +1,10 @@
 import InnerDataComponent from "./InnerDataComponent";
 import InnerHeaderComponent from "./InnerHeaderComponent";
 
-function TableComponent({
-  data,
-  uuid,
-  handleDelete,
-  handleShowHide,
-  showChildrens,
-}: TableComponentProps) {
+function TableComponent({ data, uuid, showChildrens }: TableComponentProps) {
   return (
     <>
-      <InnerDataComponent
-        data={data}
-        uuid={uuid}
-        handleDelete={handleDelete}
-        handleShowHide={handleShowHide}
-      />
+      <InnerDataComponent data={data} uuid={uuid} />
       {showChildrens && (
         <tr>
           <td>
@@ -30,8 +19,6 @@ function TableComponent({
                           key={index}
                           data={data}
                           uuid={uuid}
-                          handleDelete={handleDelete}
-                          handleShowHide={handleShowHide}
                           showChildrens={data[`${uuid}`].showChildrens}
                         />
                       );

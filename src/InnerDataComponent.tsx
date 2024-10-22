@@ -1,9 +1,11 @@
-function InnerDataComponent({
-  data,
-  uuid,
-  handleDelete,
-  handleShowHide,
-}: InnerDataProps) {
+import { useDispatch } from "react-redux";
+import { deleteData, showData } from "./data";
+
+function InnerDataComponent({ data, uuid }: InnerDataProps) {
+  const dispatch = useDispatch();
+  const handleDelete = (uuid: string) => dispatch(deleteData(uuid));
+  const handleShowHide = (uuid: string) => dispatch(showData(uuid));
+
   return (
     <tr>
       {data[`${uuid}`] !== undefined &&

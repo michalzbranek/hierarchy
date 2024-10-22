@@ -48,11 +48,15 @@ type NormalizedDataObject = {
   [key: string]: NormalizedDataInnerElement;
 };
 
+type ReduxValueType = {
+  data: ReduxInnerType;
+};
+
+type ReduxInnerType = { value: NormalizedDataObject };
+
 interface TableComponentProps {
   data: NormalizedDataObject;
   uuid: string;
-  handleDelete(uuid: string): void;
-  handleShowHide(uuid: string): void;
   showChildrens: boolean;
 }
 
@@ -64,6 +68,4 @@ interface InnerHeaderProps {
 interface InnerDataProps {
   data: NormalizedDataObject;
   uuid: string;
-  handleDelete(uuid: string): void;
-  handleShowHide(uuid: string): void;
 }
