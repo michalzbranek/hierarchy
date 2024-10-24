@@ -1,7 +1,7 @@
 import "./App.css";
 import TableComponent from "./TableComponent";
 import { useSelector } from "react-redux";
-
+//github pages
 function App() {
   const data = useSelector((state: ReduxValueType) => state.data.value);
 
