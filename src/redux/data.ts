@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import initialDataState from "./prepareInitialData";
+import initialDataState from "../prepare/prepareInitialData";
 import deleteElement from "./deleteElement";
 import showHideElement from "./showHideElement";
 
