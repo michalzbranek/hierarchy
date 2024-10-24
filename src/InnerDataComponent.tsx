@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { deleteData, showData } from "../redux/data";
+import { deleteData, showData } from "./data";
 
 function InnerDataComponent({ data, uuid }: InnerDataProps) {
   const dispatch = useDispatch();
